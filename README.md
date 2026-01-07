@@ -1,6 +1,4 @@
 # TryHackMe-Writeups
-Documentation of my cybersecurity learning journey through CTF challenges
-# CTF Challenge Writeups
 
 ##  About
 This repository contains my writeups and learnings from various Capture The Flag (CTF) challenges, primarily from TryHackMe.
