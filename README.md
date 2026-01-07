@@ -19,9 +19,9 @@ Writeups are organized by platform and difficulty:
 These writeups are for educational purposes only. All challenges were completed in authorized, legal environments (TryHackMe platform).
 
 ##  My Profiles
-- TryHackMe: [your-profile]
-- LinkedIn: [your-linkedin]
+- TryHackMe: https://tryhackme.com/p/nagol0618
+- LinkedIn:  https://www.linkedin.com/in/logan-garner-368798277/
 
 ---
 
-*Last Updated: [Date]*
+/*Last Updated: 01/07/2026
