@@ -1,27 +1,19 @@
-# TryHackMe-Writeups
+# TryHackMe Writeups
 
-##  About
-This repository contains my writeups and learnings from various Capture The Flag (CTF) challenges, primarily from TryHackMe.
+Notes and lessons from authorized TryHackMe labs. I use this repository to document what I learn and practice explaining security concepts.
 
-##  Purpose
-- Document my learning process
-- Share knowledge with the community
-- Track my progress and growth
-- Practice technical writing skills
+## Available notes
 
-##  Structure
-Writeups are organized by platform and difficulty:
-- `/TryHackMe/Easy/`
-- `/TryHackMe/Medium/`
-- `/TryHackMe/Hard/`
+- [Metasploit Framework overview](Metasploit-Framework-Overview-THM-Write-Up.md): module types, payloads, shell contexts, and lab workflow.
 
-##  Disclaimer
-These writeups are for educational purposes only. All challenges were completed in authorized, legal environments (TryHackMe platform).
+## Related projects
 
-##  My Profiles
-- TryHackMe: https://tryhackme.com/p/nagol0618
-- LinkedIn:  https://www.linkedin.com/in/logan-garner-368798277/
+- [Supply-chain threat hunt](https://github.com/nagol0618/threat-hunting-supply-chain-attack): a TryHackMe investigation using Splunk and Sysmon.
+- [Windows threat detection lab](https://github.com/nagol0618/sysmon-splunk-lab): my home lab for collecting and searching endpoint telemetry.
 
----
+## Profiles
 
-/*Last Updated: 01/07/2026
+- [TryHackMe](https://tryhackme.com/p/nagol0618)
+- [LinkedIn](https://www.linkedin.com/in/logan-garner-368798277/)
+
+All exercises described here are intended for authorized lab environments.
